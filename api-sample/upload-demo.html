@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+</head>
+
+<body>
+
+  <div>
+
+  </div>
+
+  <div>
+    <input type="file" class="form-control" id="file" placeholder="請輸入圖片連結" />
+
+  </div>
+  <br />
+  <img src="" id="img" style="width: 500px;">
+
+  <script>
+    const url = 'https://vue3-course-api.hexschool.io/v2'; // 請加入站點
+    const path = 'ella-diving'; // 請加入個人 API Path
+
+    const fileInput = document.querySelector('#file');
+
+    fileInput.addEventListener('change', upload);
+
+    function upload() {
+      // 取得 Token（Token 僅需要設定一次）
+      const token = document.cookie.replace(/(?:(?:^|.*;\s*)ella-diving-token\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+      axios.defaults.headers.common['Authorization'] = token;
+
+      // #1 撰寫上傳的 API 事件
+      console.dir(fileInput);
+      const file = fileInput.files[0];
+
+      const formData = new FormData();
+      formData.append('file-to-upload', file);
+
+      axios.post(`${url}/api/${path}/admin/upload`, formData)
+        .then(res => {
+          const { success, imageUrl, message } = res.data;
+          if (success) {
+            const img = document.querySelector('#img');
+            img.src = imageUrl;
+          } else {
+            alert(message);
+          }
+        })
+        .catch(error => {
+          console.dir(error);
+          alert(error.response.data.message);
+        });
+    }
+
+  </script>
+</body>
+
+</html>
